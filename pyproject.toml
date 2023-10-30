@@ -1,11 +1,11 @@
 [build-system]
-requires = ["flit"]
-build-backend = "flit.buildapi"
+requires = ["setuptools>=65.6", "setuptools_scm[toml]>=6.2", "wheel", "pip>=22.3.1"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name =  "py-project-toml"
+name =  "mlutilz"
 authors = [
-    {name = "Daniel Ciborowski", email = "dciborow@microsoft.com"},
+    {name = "Praveen Chandar", email = "praveenrchandar@gmail.com"},
 ]
 description = "Sample Python Project for creating a new Python Module"
 readme = "README.md"
@@ -23,9 +23,6 @@ requires-python = ">=3.8.1"
 dynamic = ["version"]
 
 [project.optional-dependencies]
-spark = [
-    "pyspark>=3.0.0"
-]
 test = [
     "bandit[toml]==1.7.5",
     "black==23.3.0",
@@ -47,12 +44,22 @@ test = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/microsoft/python-package-template/tree/main#readme"
-Source = "https://github.com/microsoft/python-package-template"
-Tracker = "https://github.com/microsoft/python-package-template/issues"
+Documentation = "https://github.com/pchandar/mlutilz/tree/main#readme"
+Source = "https://github.com/pchandar/mlutilz"
+Tracker = "https://github.com/pchandar/mlutilz/issues"
 
-[tool.flit.module]
-name = "python_package"
+[tool.setuptools]
+include-package-data = true
+package-dir = {"" = "src"}
+packages = ["multiz"]
+
+[tool.setuptools.dynamic]
+version = {attr = "multiz.__version__"}
+readme = {file= ["README.md"]}
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.rst", "*.env", "*.ipynb", "*.md"]
+
 
 [tool.bandit]
 exclude_dirs = ["build","dist","tests","scripts"]
@@ -139,19 +146,9 @@ commands =
 commands =
     pytest -m "integration" {posargs}
 
-[testenv:spark]
-extras = spark
-setenv =
-       PYSPARK_DRIVER_PYTHON = {envpython}
-       PYSPARK_PYTHON = {envpython}
-commands =
-    pytest -m "spark" {posargs}
-
 [testenv:all]
 extras = all
 setenv =
-       PYSPARK_DRIVER_PYTHON = {envpython}
-       PYSPARK_PYTHON = {envpython}
 commands =
     pytest {posargs}
 """
