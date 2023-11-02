@@ -1,0 +1,142 @@
+[build-system]
+requires = ["setuptools>=68.2", "wheel", "pip>=23.3.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name =  "mlutilz"
+authors = [
+    {name = "Praveen Chandar", email = "praveenrchandar@gmail.com"},
+]
+description = "Sample Python Project for creating a new Python Module"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+requires-python = ">=3.10"
+dynamic = ["version", "readme", "dependencies"]
+
+[project.urls]
+Documentation = "https://github.com/pchandar/mlutilz/tree/main#readme"
+Source = "https://github.com/pchandar/mlutilz"
+Tracker = "https://github.com/pchandar/mlutilz/issues"
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.rst", "*.env", "*.ipynb", "*.md"]
+
+[tool.setuptools]
+include-package-data = true
+package-dir = {"" = "src"}
+packages = ["mlutilz"]
+
+[tool.setuptools.dynamic]
+version = {attr = "mlutilz.__version__"}
+readme = {file= ["README.md"]}
+
+[project.optional-dependencies]
+core = ["fsspec"]
+train = []
+infer = []
+docs = ["mkdocs-material"]
+dev = [
+    "black==23.9.1",
+    "check-manifest==0.49",
+    "pre-commit==3.3.1",
+]
+test = [
+    "bandit[toml]==1.7.5",   
+    "flake8-bugbear==23.9.16",
+    "flake8-docstrings",
+    "flake8-formatter_junit_xml",
+    "flake8",
+    "flake8-pyproject",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>3.10.1",
+    "pytest-runner",
+    "pytest>=7.4.2",
+    "pytest-github-actions-annotate-failures",
+    "shellcheck-py>=0.9.0.6"
+]
+
+
+
+[tool.bandit]
+exclude_dirs = ["build","dist","tests","scripts"]
+number = 4
+recursive = true
+targets = "src"
+
+[tool.black]
+line-length = 120
+fast = true
+
+[tool.coverage.run]
+branch = true
+
+# [tool.coverage.report]
+# fail_under = 100
+
+[tool.coverage.paths]
+source = ["src"]
+
+[tool.flake8]
+max-line-length = 120
+select = "F,E,W,B,B901,B902,B903"
+exclude = [
+    ".eggs",
+    ".git",
+    ".tox",
+    "nssm",
+    "obj",
+    "out",
+    "packages",
+    "pywin32",
+    "tests",
+    "swagger_client"
+]
+ignore = [
+    "E722",
+    "B001",
+    "W503",
+    "E203"
+]
+
+[tool.pyright]
+include = ["src"]
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+]
+venv = "env310"
+reportMissingImports = true
+reportMissingTypeStubs = false
+pythonVersion = "3.10"
+pythonPlatform = "Linux"
+executionEnvironments = [{ root = "src" }]
+
+[tool.pytest.ini_options]
+addopts = [
+    "-v",
+    "-s",
+    "--cov=src",
+    "--cov-report=html:cobertura/html",
+    "--cov-report=xml:cobertura/coverage.xml",
+    "--cov-report=term-missing",
+    "--junitxml=test-results/junit.xml",
+]
+filterwarnings =    [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+testpaths = "tests"
+python_files = ["test_*.py", "*_test.py"]
+junit_family = "xunit2"
+markers = [
+    "integration: marks as integration test",
+    "notebooks: marks as notebook test",
+    "gpu: marks as gpu test",
+    "slow: marks tests as slow",
+]

@@ -1,0 +1,1 @@
+-e ".[core,train,infer,test,dev,docs]"

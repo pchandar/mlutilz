@@ -1,0 +1,53 @@
+name: Python CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [created]    
+  workflow_dispatch:
+
+jobs:
+  run-python-tests:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: "."
+    strategy:
+      matrix:
+        python-version:
+          - '3.10'
+        os: ['ubuntu-latest', macos-latest]
+    name: Test with Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      # - name: Install Linux dependencies
+      #   if: runner.os == 'Linux'
+      #   run: sudo apt-get update && sudo apt-get install -y pkg-config 
+      - name: Install test dependencies
+        env:
+          # on macOS and with Python 3.10: building NumPy from source fails without these options:
+          NPY_BLAS_ORDER: ""
+          NPY_LAPACK_ORDER: ""
+        run: |
+          python -m pip install --upgrade pip
+          pip install wheel
+          pip install -r dev-requirements.txt
+      # - name: Build locally
+      #   run: python setup.py develop
+      - name: Run tests
+        run: pytest
+
+  # publish:
+  #   uses: microsoft/action-python/.github/workflows/publish.yml@0.7.2
+  #   secrets:
+  #     PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+  #     TEST_PYPI_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD  }}
